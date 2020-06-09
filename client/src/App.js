@@ -1,10 +1,11 @@
 import React from 'react';
 // import logo from './logo.svg';
-import { Bar } from 'react-chartjs-2'
+import { Bar, Line, Polar } from 'react-chartjs-2'
 import axios from 'axios'
 import './App.css';
 
-function App() {
+const App = () => {
+
   const [data, setData] = React.useState({
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
     datasets: [
@@ -24,25 +25,25 @@ function App() {
     axios.get('http://localhost:7744/inventory')  
       .then(datum => {
         console.log(datum.data)
-        const values = Object.values(datum.data).reduce((prev, arr) => {
-          let sum = 0
-          for (let i = 0; i < arr.length; i++) {
-            sum += (Number(arr[i]) || 0)
-          }
-          console.log(sum / arr.length)
-          return [ ...prev, sum / arr.length ]
-        }, [])
+        // const values = Object.values(datum.data).reduce((prev, arr) => {
+        //   let sum = 0
+        //   for (let i = 0; i < arr.length; i++) {
+        //     sum += (Number(arr[i]) || 0)
+        //   }
+        //   console.log(sum / arr.length)
+        //   return [ ...prev, sum / arr.length ]
+        // }, [])
 
-        setData({
-          ...data,
-          labels: Object.keys(datum.data),
-          datasets: [
-            {
-              ...data.datasets[0],
-              data: values
-            }
-          ]
-        })
+        // setData({
+        //   ...data,
+        //   labels: Object.keys(datum.data),
+        //   datasets: [
+        //     {
+        //       ...data.datasets[0],
+        //       data: values
+        //     }
+        //   ]
+        // })
       })
       .catch((err) => console.error('ERRORRR', err))
   }, [])
@@ -53,10 +54,45 @@ function App() {
         <Bar
           data={data}
           width={100}
-          height={350}
+          height={320}
           options={{ maintainAspectRatio: false }}
         />
       </div>
+      <div>
+        <Line
+          data={data}
+          width={100}
+          height={320}
+          options={{ maintainAspectRatio: false }}
+        />
+      </div>
+
+      {/* ========== NAME ==================== */}
+      
+      {/* ======================================= */}
+
+      {/* ========== Daniel F. Chart============= */}
+      
+      
+      
+      {/* ======================================= */}
+      
+      
+      {/* ============ Gabe E. Chart============== */}
+      <div>
+        <Polar 
+          data={data}
+          width={100}
+          height={320}
+          options={{ maintainAspectRatio: false }}
+        />
+      </div>
+      {/* ======================================= */}
+      
+
+      {/* ========== Meg Y. Chart================= */}
+      
+      {/* ======================================= */}
 
 
       {/* ======================================= */}
