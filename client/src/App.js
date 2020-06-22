@@ -1,6 +1,6 @@
 import React from 'react';
 // import logo from './logo.svg';
-import { Bar, Line, Polar } from 'react-chartjs-2'
+import { Bar, Line, Polar, Doughnut } from 'react-chartjs-2'
 import axios from 'axios'
 import './App.css';
 
@@ -11,39 +11,124 @@ const App = () => {
     datasets: [
       {
         label: 'My First dataset',
-        backgroundColor: 'rgba(255,99,132,0.2)',
+        backgroundColor: [
+          '#120136','#035AA6','#40BAD5','#FCBF1E','#120136','#035AA6','#40BAD5','#FCBF1E','#120136','#035AA6','#40BAD5','#FCBF1E',
+        ],
         borderColor: 'rgba(255,99,132,1)',
         borderWidth: 1,
-        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+        hoverBackgroundColor: [
+          '#120136','#035AA6','#40BAD5','#FCBF1E','#120136','#035AA6','#40BAD5','#FCBF1E','#120136','#035AA6','#40BAD5','#FCBF1E',
+        ],
         hoverBorderColor: 'rgba(255,99,132,1)',
         data: [65, 59, 80, 81, 56, 55, 40]
       },
     ]
   })
 
+  const [doughnutData, setDoughnutData] = React.useState({
+    labels: ["1", "2", "3", "4", "5", "6"],
+    datasets: [
+      {
+        // label: 'My Doughnut dataset',
+        data: [1,2,3,4,5,6],
+        backgroundColor: [
+          '#120136','#035AA6','#40BAD5','#FCBF1E','#120136','#035AA6','#40BAD5','#FCBF1E','#120136','#035AA6','#40BAD5','#FCBF1E',
+        ],
+        hoverBackgroundColor: [
+          '#120136','#035AA6','#40BAD5','#FCBF1E','#120136','#035AA6','#40BAD5','#FCBF1E','#120136','#035AA6','#40BAD5','#FCBF1E',
+        ]
+      },
+    ]
+  })
+
+  const [polarData, setPolarData] = React.useState({
+    labels: ["USA", "Canada", "Chile", "Colombia", "France", "United Kingdom"],
+    datasets: [
+      {
+        // label: 'My Polar dataset',
+        data: [1,2,3,4,5,6],
+        backgroundColor: [
+          '#120136','#035AA6','#40BAD5','#FCBF1E','#120136','#035AA6','#40BAD5','#FCBF1E','#120136','#035AA6','#40BAD5','#FCBF1E',
+        ],
+        hoverBackgroundColor: [
+          '#120136','#035AA6','#40BAD5','#FCBF1E','#120136','#035AA6','#40BAD5','#FCBF1E','#120136','#035AA6','#40BAD5','#FCBF1E',
+        ]
+      },
+    ]
+  });
+
+
+
+  
+  
+
   React.useEffect(() => {
     axios.get('http://localhost:7744/inventory')  
       .then(datum => {
-        console.log(datum.data)
-        // const values = Object.values(datum.data).reduce((prev, arr) => {
-        //   let sum = 0
-        //   for (let i = 0; i < arr.length; i++) {
-        //     sum += (Number(arr[i]) || 0)
-        //   }
-        //   console.log(sum / arr.length)
-        //   return [ ...prev, sum / arr.length ]
-        // }, [])
+        // =====================================================================
+        // ============================ Donut Data =============================
+        // =====================================================================
+        // This is spelled different because of doughnutData above
+        const donutData = datum.data
+          .reduce((previousStateValue, currentLoopValue) => {
+            return {
+              ...previousStateValue,
+              [currentLoopValue.StockCode]: (previousStateValue[currentLoopValue.StockCode] || 0) + parseInt(currentLoopValue.Quantity),
+            }
+          }, {})
+          
+        const topTen = Object.entries(donutData)
+          .sort((a, b) => {
+            return b[1] - a[1]
+          })
+          .slice(0, 10)
+          .reduce((prev, cur) => {
+            return {
+              ...prev,
+              [cur[0]]: cur[1],
+            }
+          }, {})
 
-        // setData({
-        //   ...data,
-        //   labels: Object.keys(datum.data),
-        //   datasets: [
-        //     {
-        //       ...data.datasets[0],
-        //       data: values
-        //     }
-        //   ]
-        // })
+        setDoughnutData({
+          ...doughnutData,
+          labels: Object.keys(topTen),
+          datasets: [
+            {
+              ...doughnutData.datasets[0],
+              data: Object.values(topTen)
+            }
+          ]
+        })
+
+        // =====================================================================
+        // ========================== Polar Data  ==============================
+        // =====================================================================
+        // EXPLANATION OF REDUCE METHOD BELOW
+        // [{Country: 'United Kingdom'}, {Country: 'United States'}, {Country: 'United Kingdom'}]
+        const tempPolarData = datum.data.reduce( (prev, curr)=>{
+          // prev: {'United Kingdom': 1, 'United States': 1}
+          // curr:  {Country: 'United Kingdom'}
+          return {
+            ...prev,
+            [curr.Country]: (prev[curr.Country] || 0 ) + 1
+          }
+          // end: {'United Kingdom': 2, 'United States': 1}
+        }, {})
+        
+        setPolarData({
+          ...polarData,
+          labels: Object.keys(tempPolarData),
+          datasets: [
+            {
+              ...polarData.datasets[0],
+            data: Object.values(tempPolarData),
+            }
+          ]
+        })
+
+        // =====================================================================
+        // ========================= Other Data ================================
+        // =====================================================================
       })
       .catch((err) => console.error('ERRORRR', err))
   }, [])
@@ -58,6 +143,7 @@ const App = () => {
           options={{ maintainAspectRatio: false }}
         />
       </div>
+
       <div>
         <Line
           data={data}
@@ -67,49 +153,23 @@ const App = () => {
         />
       </div>
 
-      {/* ========== NAME ==================== */}
-      
-      {/* ======================================= */}
-
-      {/* ========== Daniel F. Chart============= */}
-      
-      
-      
-      {/* ======================================= */}
-      
-      
-      {/* ============ Gabe E. Chart============== */}
       <div>
-        <Polar 
-          data={data}
+        <Doughnut
+          data={doughnutData}
           width={100}
           height={320}
           options={{ maintainAspectRatio: false }}
         />
       </div>
-      {/* ======================================= */}
-      
 
-      {/* ========== Meg Y. Chart================= */}
-      
-      {/* ======================================= */}
-
-
-      {/* ======================================= */}
-      {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header> */}
+      <div>
+        <Bar 
+          data={polarData}
+          width={100}
+          height={320}
+          options={{ maintainAspectRatio: false }}
+        />
+      </div>
     </div>
   );
 }
