@@ -1,8 +1,9 @@
-import React from 'react';
+import React from 'react'
 // import logo from './logo.svg';
 import { Bar, Line, Polar, Doughnut } from 'react-chartjs-2'
+// import jwt from 'jsonwebtoken'
 import axios from 'axios'
-import './App.css';
+import './App.css'
 
 const App = () => {
 
@@ -152,6 +153,13 @@ const App = () => {
           options={{ maintainAspectRatio: false }}
         />
       </div>
+
+      <form action='http://localhost:7744/blah' method='POST' style={{display: 'flex', flexDirection: 'column', padding: '3rem 25%'}}>
+        <input name="field1" />
+        <input name="field2" />
+        <textarea name="field3" />
+        <button onClick={onSubmit}>SUBMIT BUTTON</button>
+      </form>
 
       <div>
         <Doughnut
