@@ -54,6 +54,29 @@ app.post('/blah', (req, res) => {
     )
 })
 
+app.post('/users', cors(corsOptions), async (req, res) => {
+    const MongoClient = require('mongodb').MongoClient;
+    const uri = "mongodb+srv://countchocula:Vnd0weExxx5MvW5R@cluster0-6rjco.mongodb.net/grammer-ecomm-dashboard?retryWrites=true&w=majority";
+    const client = new MongoClient(uri, { useNewUrlParser: true });
+    
+    client.connect(uri, async (err, mongoclient) => {
+        if (!req.body.username) {
+            return res.status(401).send({error: 'Did not provide username'})
+        }
+        const user = await mongoclient
+            .db("grammer-ecomm-dashboard")
+            .collection('user')
+            .findOne({'username': req.body.username});
+        
+        if (user) {
+            return res.send(user)
+        }
+        return res.status(404).send({error: 'User does not exist'})
+        // FOREACH IS WHEN THERE THERE ARE MULTIPLE VALUES COMING BACK ... ex. collection().find()
+        // collection.forEach((item) => console.log('SOMETHING: ', item))
+    });
+})
+
 app.get('/inventory', cors(corsOptions), async (req, res) => {
     const MongoClient = require('mongodb').MongoClient;
 

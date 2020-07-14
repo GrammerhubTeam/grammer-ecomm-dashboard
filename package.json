@@ -9,7 +9,7 @@
     "csvtojson": "^2.0.10",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^2.2.33"
+    "mongodb": "^2.2.36"
   },
   "devDependencies": {},
   "scripts": {
